@@ -5,7 +5,22 @@ import bcrypt from 'bcryptjs';
 import { PlatformUser } from "@enterprise-commerce/core/platform/types"
 import openDb from '../db/db';
 
-export const createUser = () => {} // Implement the createUser function
+export const createUser = async ( email: string, password: string): Promise<PlatformUser> | null => {
+  try {
+
+
+  const db = await openDb();
+  // unique constraint for email is already in db
+  const insertResult = await db.run('INSERT INTO users (email, password) VALUES (?, ?)', email, password);
+  console.log(insertResult);
+  await db.close();
+  const user: PlatformUser = {"id": `${insertResult.lastID}`, "email": email};
+  return user || null;
+    } catch (error) {
+      console.log("Error while inserting: ", error);
+      return null;
+    }
+}
 
 export const findUserById = async (id: string): Promise<PlatformUser | null> => {
   const db = await openDb();

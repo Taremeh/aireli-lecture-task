@@ -1,11 +1,31 @@
 import { PlatformAccessToken, PlatformUserCreateInput, PlatformUser } from '@enterprise-commerce/core/platform/types';
 import axios from 'axios';
-import { Request, Response } from 'express';
+import { log } from 'console';
+import { Request, response, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 const registerUser = async (input: PlatformUserCreateInput): Promise<Pick<PlatformUser, "id"> | undefined | null> => {
-  // ToDo: Implement the registerUser function
-  return null
+  const user: PlatformUser = {"id": "-1"}
+  try {
+    if(input.email != "" && input.password != "") {
+    await axios.post('http://localhost:3001/register', {"email": input.email, "password": input.password}).then(function (response) {
+    user.id = response.data.user.id;
+    user.email = response.data.user.email
+    return user;
+  }).catch(function (error) {
+    console.log(error);});
+    
+    } else {
+      console.log("No input data provided!");
+    }
+  } catch (error) {
+    console.log("Error while registering user in client: ", error)
+  }
+  if (user.id != "-1") {
+    return user;
+  } else {
+    return null;
+  }
 };
 
 const loginUser = async (input: PlatformUserCreateInput) => {

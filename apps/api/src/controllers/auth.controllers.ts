@@ -10,7 +10,8 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
     email,
     password
   };
-
-  // please finish this function
+  console.log("registering user ", email);
+  await createUser(email, password);
+  console.log("Registered user ", email);
 
 };
